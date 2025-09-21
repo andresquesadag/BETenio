@@ -1,3 +1,5 @@
+# V1.0 | 2025-8
+
 import requests
 import json
 import os
@@ -6,7 +8,12 @@ from typing import Optional
 
 
 class LMStudioClient:
-    def __init__(self, base_url: str = "http://127.0.0.1:1234", model: Optional[str] = None, file_path: str = None):
+    def __init__(
+        self,
+        base_url: str = "http://127.0.0.1:1234",
+        model: Optional[str] = None,
+        file_path: str = None,
+    ):
         """
         Initialize the LM Studio client
         Args:
@@ -14,7 +21,7 @@ class LMStudioClient:
             model: Optional model name to use
             file_path: Optional path to file to load in memory
         """
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url.rstrip("/")
         self.chat_url = f"{self.base_url}/v1/chat/completions"
         self.models_url = f"{self.base_url}/v1/models"
         self.session = requests.Session()  # Reuse session for keep-alive
@@ -24,14 +31,16 @@ class LMStudioClient:
     def _get_default_model(self):
         models = self.get_available_models()
         if not models:
-            raise RuntimeError("No models available. Make sure a model is loaded in LM Studio.")
+            raise RuntimeError(
+                "No models available. Make sure a model is loaded in LM Studio."
+            )
         print(f"Using model: {models[0]}")
         return models[0]
 
     def _load_file(self, file_path: str) -> str:
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File '{file_path}' not found")
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             return f.read()
 
     def get_available_models(self):
@@ -47,13 +56,15 @@ class LMStudioClient:
             print(f"Could not fetch models: {e}")
             return []
 
-    def send_message_with_file(self, message: str, max_tokens: int = 3000, temperature: float = 0.7) -> Optional[str]:
+    def send_message_with_file(
+        self, message: str, max_tokens: int = 3000, temperature: float = 0.7
+    ) -> Optional[str]:
         """
         Send a text message along with the preloaded file content to the LM Studio model
         """
         if not self.file_content:
             print("Warning: No file content loaded")
-        
+
         combined_message = f"{message}\n\nFile content:\n{self.file_content}"
 
         payload = {
@@ -61,12 +72,16 @@ class LMStudioClient:
             "messages": [{"role": "user", "content": combined_message}],
             "max_tokens": max_tokens,
             "temperature": temperature,
-            "stream": False
+            "stream": False,
         }
 
         try:
-            response = self.session.post(self.chat_url, headers={"Content-Type": "application/json"},
-                                         json=payload, timeout=3600)
+            response = self.session.post(
+                self.chat_url,
+                headers={"Content-Type": "application/json"},
+                json=payload,
+                timeout=3600,
+            )
             response.raise_for_status()
             data = response.json()
             if "choices" in data and len(data["choices"]) > 0:
@@ -91,7 +106,7 @@ class LMStudioClient:
             print("Error: Invalid JSON response from server")
             return None
         except Exception as e:
-            print(f"Unexpected error: {e}") 
+            print(f"Unexpected error: {e}")
             return None
 
 
@@ -114,14 +129,13 @@ message = (
 )
 
 
-
 result_file_path = "noticiasIAF.csv"
 batch_size = 100  # escribir cada 100 respuestas para mayor eficiencia
 
 buffer = []
 total_iterations = 1000
 
-with open(result_file_path, 'a', encoding='utf-8') as resultCSV:
+with open(result_file_path, "a", encoding="utf-8") as resultCSV:
     for i in range(total_iterations):
         response = client.send_message_with_file(message)
         if response:

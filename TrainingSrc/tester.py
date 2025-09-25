@@ -216,7 +216,10 @@ def testModel(test_path, model_path):
     model_list = test_data["modelo"].to_list()
     label_list = test_data["authorship"].to_list()
 
-    predictions = predict_with_trained_model(body_list, model_path)["predicted_label"]
+    predictions_list = predict_with_trained_model(body_list, model_path)
+    predictions = []
+    for i in predictions_list:
+        predictions.append(i["predicted_label"])
     
     accuracy = accuracy_score(label_list, predictions)
     precision, recall, f1, _ = precision_recall_fscore_support(label_list, predictions, average='weighted')

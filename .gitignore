@@ -214,3 +214,4 @@ src/news_scraper/news_data/
 */test_dataset.csv
 */train_dataset.csv
 TrainingSrc/analysis_outputs/
+TrainingSrc/stylometry_outputs/

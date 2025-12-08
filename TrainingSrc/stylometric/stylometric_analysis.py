@@ -6,6 +6,7 @@ from scipy.stats import ttest_ind, ks_2samp
 
 # Download punkt tokenizer silently if not already present
 nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
 
 
 def _compute_features(text: str) -> dict:

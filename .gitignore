@@ -213,5 +213,4 @@ src/news_scraper/news_data/
 */BETenio/
 */test_dataset.csv
 */train_dataset.csv
-*/train_predictions_with_confidence.csv
-*/test_predictions_with_confidence.csv
+TrainingSrc/analysis_outputs/

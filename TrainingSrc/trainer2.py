@@ -235,16 +235,6 @@ def predict_with_trained_model(texts, model_path, tokenizer_path=None):
 
     return predictions
 
-
-# IMPORTANT: the old local `testModel()` function has been REMOVED
-# so that we always use `tester.testModel`, which now includes
-# all the extended analyses (confidence, errors, LIME, embeddings, etc).
-
-
-# ===================================================================
-#                            MAIN SCRIPT
-# ===================================================================
-
 if __name__ == "__main__":
 
     # Same UI flow as before: select folder with train_dataset/test_dataset/BETenio

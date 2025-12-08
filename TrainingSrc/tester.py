@@ -230,9 +230,7 @@ def predict_with_trained_model(texts, model_path, tokenizer_path=None):
 
 
 
-# ===================================================================
-#                 ★★ EXTENDED ANALYSIS — NEW LOGIC ★★
-# ===================================================================
+# --- Extended Analysis ---
 
 def testModel(test_path, model_path):
 

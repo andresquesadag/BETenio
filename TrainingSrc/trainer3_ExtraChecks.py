@@ -231,9 +231,6 @@ def predict_with_trained_model(texts, model_path, tokenizer_path=None):
     return predictions
 
 
-# ===================================================================
-#          ★★ NEW SECTION: CALL EXTENDED ANALYSIS AFTER TRAINING ★★
-# ===================================================================
 
 if __name__ == "__main__":
 
@@ -260,4 +257,4 @@ if __name__ == "__main__":
     )  # ←←← uses new extended tester
 
     print("\n========= TRAIN DATASET RESULTS =========")
-    testModel(test_path=train_path, model_path=output_path)  # ←←← same extended tester
+    testModel(test_path=train_path, model_path=output_path)

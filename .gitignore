@@ -208,3 +208,10 @@ __marimo__/
 # News scraping data
 
 src/news_scraper/news_data/
+
+# BETenio files
+*/BETenio/
+*/test_dataset.csv
+*/train_dataset.csv
+*/train_predictions_with_confidence.csv
+*/test_predictions_with_confidence.csv

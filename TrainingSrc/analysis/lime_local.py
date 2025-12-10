@@ -11,13 +11,10 @@ def lime_global_analysis(
     model_path: str,
     df,
     prefix: str = "test",
-    num_samples: int = 10,  # número de textos explicados
-    perturbations: int = 300,  # textos sintéticos que LIME genera (default=5000)
+    num_samples: int = 300,  # número de textos explicados
+    perturbations: int = 3000,  # textos sintéticos que LIME genera (default=5000)
     max_length: int = 256,  # más pequeño = menos VRAM / más rápido
 ):
-    """
-    GPU-safe and low-memory LIME analysis.
-    """
 
     os.makedirs("analysis_outputs", exist_ok=True)
 
@@ -38,9 +35,6 @@ def lime_global_analysis(
     # Limit number of examples explained
     subset = df.sample(min(num_samples, len(df)), random_state=42)
 
-    ##################################################
-    # GPU-FRIENDLY predict_proba (1 text per pass)
-    ##################################################
     def predict_proba(texts):
         results = []
 
@@ -61,9 +55,7 @@ def lime_global_analysis(
 
         return np.vstack(results)
 
-    ##################################################
-    # AGGREGATE FEATURE IMPORTANCE
-    ##################################################
+    # Feature importance accumulators
     pos_weights = {}
     neg_weights = {}
 
@@ -71,7 +63,7 @@ def lime_global_analysis(
     with open(txt_out, "w", encoding="utf-8") as f:
 
         for _, row in subset.iterrows():
-            text = str(row["text"])
+            text = str(row["cuerpo"])
 
             exp = explainer.explain_instance(
                 text, predict_proba, num_features=10, num_samples=perturbations

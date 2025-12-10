@@ -254,7 +254,7 @@ if __name__ == "__main__":
     print("\n========= TEST DATASET RESULTS =========")
     testModel(
         test_path=test_path, model_path=output_path
-    )  # ←←← uses new extended tester
+    )
 
     print("\n========= TRAIN DATASET RESULTS =========")
     testModel(test_path=train_path, model_path=output_path)

@@ -1,0 +1,6 @@
+numpy
+pandas
+scipy
+spacy>=3.7.0
+https://github.com/explosion/spacy-models/releases/download/es_core_news_md-3.7.1/es_core_news_md-3.7.1-py3-none-any.whl
+scikit-learn

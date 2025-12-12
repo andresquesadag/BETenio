@@ -1,0 +1,133 @@
+(venv) A:\Uni\II-25\InvCC\BETenio\src\article_processing>python corpus_redundancy_filter.py Reales_filtered.csv human_news.csv
+
+=== CLEANING DATASET ===
+(DONE) Exact duplicates removed: 14956
+Extracting high-frequency n-grams...
+
+=== Suspicious N-grams Detected ===
+millones de euros  (freq=19621)
+en el que  (freq=14047)
+en la que  (freq=11464)
+en el congreso  (freq=10012)
+uno de los  (freq=8613)
+por lo que  (freq=8368)
+presidente del gobierno  (freq=7900)
+que no se  (freq=7519)
+el presidente del  (freq=7458)
+de que el  (freq=6700)
+por su parte  (freq=6353)
+la comunidad de  (freq=6286)
+comunidad de madrid  (freq=6284)
+después de que  (freq=6217)
+la comunidad de madrid  (freq=6102)
+una de las  (freq=6081)
+de la generalitat  (freq=5977)
+presidente de la  (freq=5946)
+la guardia civil  (freq=5864)
+estado de alarma  (freq=5825)
+Filtering articles containing suspicious n-grams...
+(DONE) Template-based articles removed: 41955
+
+(DONE) Final dataset size: 1513 rows
+(DONE) Saved cleaned dataset to human_news.csv
+
+(venv) A:\Uni\II-25\InvCC\BETenio\src\article_processing>python corpus_redundancy_filter.py GPT_filtered.csv gpt_news.csv
+
+=== CLEANING DATASET ===
+(DONE) Exact duplicates removed: 4925
+Extracting high-frequency n-grams...
+
+=== Suspicious N-grams Detected ===
+la creación de  (freq=3262)
+la necesidad de  (freq=1949)
+la importancia de  (freq=1654)
+la implementación de  (freq=1515)
+una serie de  (freq=1458)
+en tiempo real  (freq=1304)
+con el objetivo  (freq=1300)
+el objetivo de  (freq=1291)
+con el objetivo de  (freq=1262)
+se espera que  (freq=1114)
+creación de un  (freq=1080)
+la creación de un  (freq=1077)
+en el ámbito  (freq=1075)
+de efecto invernadero  (freq=1063)
+gases de efecto invernadero  (freq=1056)
+gases de efecto  (freq=1056)
+de gases de  (freq=1045)
+de gases de efecto  (freq=1044)
+de gases de efecto invernadero  (freq=1044)
+las emisiones de  (freq=967)
+Filtering articles containing suspicious n-grams...
+(DONE) Template-based articles removed: 3861
+
+(DONE) Final dataset size: 12 rows
+(DONE) Saved cleaned dataset to gpt_news.csv
+
+(venv) A:\Uni\II-25\InvCC\BETenio\src\article_processing>python corpus_redundancy_filter.py Deepseek_filtered.csv ds_news.csv
+
+=== CLEANING DATASET ===
+(DONE) Exact duplicates removed: 18
+Extracting high-frequency n-grams...
+
+=== Suspicious N-grams Detected ===
+parque solar híbrido  (freq=3950)
+de almacenamiento térmico  (freq=3022)
+primer parque solar  (freq=2630)
+primer parque solar híbrido  (freq=2625)
+solar híbrido en  (freq=2416)
+parque solar híbrido en  (freq=2403)
+sino que también  (freq=2390)
+primer parque solar híbrido en  (freq=2147)
+alcalde ada colau  (freq=2098)
+50 000 hogares  (freq=2086)
+la ciudad de  (freq=2025)
+de 50 000  (freq=2019)
+más de 50  (freq=2017)
+más de 50 000  (freq=1989)
+la transición energética  (freq=1925)
+de 50 000 hogares  (freq=1886)
+más de 50 000 hogares  (freq=1864)
+híbrido en europa  (freq=1863)
+solar híbrido en europa  (freq=1859)
+parque solar híbrido en europa  (freq=1858)
+Filtering articles containing suspicious n-grams...
+(DONE) Template-based articles removed: 5572
+
+(DONE) Final dataset size: 1557 rows
+(DONE) Saved cleaned dataset to ds_news.csv
+
+
+(venv) A:\Uni\II-25\InvCC\BETenio\src\article_processing>python corpus_redundancy_filter.py Claude_filtered.csv claude_news.csv
+
+=== CLEANING DATASET ===
+(DONE) Exact duplicates removed: 0
+Extracting high-frequency n-grams...
+
+=== Suspicious N-grams Detected ===
+se espera que  (freq=5948)
+la comunidad científica  (freq=3283)
+universidad nacional autónoma  (freq=2908)
+universidad nacional autónoma de  (freq=2905)
+universidad nacional autónoma de méxico  (freq=2905)
+nacional autónoma de  (freq=2905)
+nacional autónoma de méxico  (freq=2905)
+autónoma de méxico  (freq=2905)
+de méxico unam  (freq=2819)
+nacional autónoma de méxico unam  (freq=2819)
+autónoma de méxico unam  (freq=2819)
+el descubrimiento de  (freq=2589)
+en un giro  (freq=2547)
+uno de los  (freq=2434)
+ha anunciado un  (freq=2387)
+de una nueva  (freq=2326)
+la importancia de  (freq=2200)
+unam ha anunciado  (freq=2112)
+un giro sorprendente  (freq=1979)
+en un giro sorprendente  (freq=1979)
+Filtering articles containing suspicious n-grams...
+(DONE) Template-based articles removed: 10317
+
+(DONE) Final dataset size: 549 rows
+(DONE) Saved cleaned dataset to claude_news.csv
+

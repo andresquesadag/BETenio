@@ -1,5 +1,8 @@
 # Copyright (2025) Andres Quesada G., Andre Salas, Felipe Bianchini
 
+# ! NOTE: We ended up not using this script in the final product, but it can be
+# ! useful for future reference or extensions.
+
 #!/usr/bin/env bash
 # Simple news scraper: downloads HTML and extracts text content
 # Requirements: curl, lynx (optional for better text extraction)

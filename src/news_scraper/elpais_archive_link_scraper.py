@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 elpais_archive_scraper.py
 
@@ -22,7 +19,6 @@ from datetime import datetime, timedelta
 from tqdm import tqdm
 import time
 
-# ---------------- CONFIG ----------------
 
 START_DATE = datetime(2015, 1, 1)
 END_DATE = datetime(2020, 12, 31)
@@ -32,9 +28,7 @@ BASE_URL = "https://elpais.com/hemeroteca/{date}/"
 OUTPUT_CSV = "elpais_links_2015_2020.csv"
 
 REQUEST_TIMEOUT = 10
-SLEEP_BETWEEN_REQUESTS = 1.0  # seconds (ser respetuosos)
-
-# ----------------------------------------
+SLEEP_BETWEEN_REQUESTS = 1.0  # seconds
 
 
 def iter_dates(start: datetime, end: datetime):
@@ -79,8 +73,8 @@ def extract_links(date_str: str, html: str):
     soup = BeautifulSoup(html, "html.parser")
     results = []
 
-    # Heurística: muchos titulares están en h2/h3 con un <a> dentro.
-    # Si eso falla, también miramos <a> largos en otros lugares.
+    # Note: A lot of headers are in h2/h3 > with <a> inside.
+    # If that fails, we also look for long <a> elsewhere.
     candidate_links = []
 
     # 1) h2/h3 > a
@@ -90,7 +84,7 @@ def extract_links(date_str: str, html: str):
             if a is not None:
                 candidate_links.append(a)
 
-    # 2) Si no encontramos nada, fallback: todos los <a>
+    # 2) Else, all <a>
     if not candidate_links:
         candidate_links = soup.find_all("a", href=True)
 
@@ -99,16 +93,14 @@ def extract_links(date_str: str, html: str):
         href = a["href"]
 
         if not title or len(title) < 15:
-            # descartamos títulos demasiado cortos tipo "España" o "Leer más"
+            # Skip very short titles
             continue
 
-        # Normalizar URL relativa
         if href.startswith("/"):
             href_full = "https://elpais.com" + href
         else:
             href_full = href
 
-        # Filtrar URLs claramente no-noticia
         if "hemeroteca" in href_full:
             continue
         if "plus.elpais.com" in href_full:
@@ -118,7 +110,6 @@ def extract_links(date_str: str, html: str):
         if "colecciones.elpais.com" in href_full:
             continue
 
-        # Nos quedamos solo con dominio elpais.com (no cincodias, motor, etc. si quieres ser estricto)
         if not href_full.startswith("https://elpais.com"):
             continue
 
@@ -150,7 +141,6 @@ def main():
         if day_links:
             all_rows.extend(day_links)
 
-        # Respetar el servidor
         time.sleep(SLEEP_BETWEEN_REQUESTS)
 
     if not all_rows:
@@ -159,7 +149,6 @@ def main():
 
     df = pd.DataFrame(all_rows)
 
-    # Eliminar duplicados por URL
     before = len(df)
     df = df.drop_duplicates(subset=["url"])
     print(f"\nRemoved {before - len(df)} duplicate URLs.")

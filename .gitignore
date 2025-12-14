@@ -208,6 +208,7 @@ __marimo__/
 # News scraping data
 
 src/news_scraper/news_data/
+src/news_scraper/news_data-inoreader/
 
 # BETenio files
 */BETenio/

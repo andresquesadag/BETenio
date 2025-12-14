@@ -1,4 +1,5 @@
 import os
+import argparse
 import logging
 import requests
 from time import sleep
@@ -7,56 +8,63 @@ from bs4 import BeautifulSoup
 from readability import Document
 from tqdm import tqdm
 
-URLS_FILE = "urls.txt"
 
-START_LINE = 0
-END_LINE = 10
-
-HTML_DIR = "news_data/htmls"
-TEXT_DIR = "news_data/articles"
-LOG_FILE = "news_data/ns.log"
-
-REQUEST_TIMEOUT = 15
-SLEEP_BETWEEN_REQUESTS = 1
-RETRIES = 3
-RETRY_SLEEP = 5
-
-HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; NewsScraperForBETenio/2.0)"}
-
-os.makedirs(HTML_DIR, exist_ok=True)
-os.makedirs(TEXT_DIR, exist_ok=True)
-
-logging.basicConfig(
-    filename=LOG_FILE,
-    filemode="a",
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-logging.info("=" * 60)
-logging.info("Block start | lines %d–%d", START_LINE, END_LINE)
-start_time = datetime.now()
-
-with open(URLS_FILE, encoding="utf-8") as f:
-    urls = f.read().splitlines()[START_LINE:END_LINE]
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Ethical article scraper with full audit logging"
+    )
+    parser.add_argument("--urls", required=True)
+    parser.add_argument("--start", type=int, required=True)
+    parser.add_argument("--end", type=int, required=True)
+    parser.add_argument("--html-dir", default="html")
+    parser.add_argument("--text-dir", default="articles")
+    parser.add_argument("--log", default="scraping.log")
+    parser.add_argument("--sleep", type=int, default=1)
+    parser.add_argument("--retries", type=int, default=3)
+    parser.add_argument("--retry-sleep", type=int, default=5)
+    parser.add_argument("--timeout", type=int, default=15)
+    return parser.parse_args()
 
 
-def fetch_html(url):
-    last_exception = None
-    for attempt in range(1, RETRIES + 1):
+def setup_logging(log_file):
+    logging.basicConfig(
+        filename=log_file,
+        filemode="a",
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+
+def load_urls(path, start, end):
+    with open(path, encoding="utf-8") as f:
+        return f.read().splitlines()[start:end]
+
+
+def fetch_html(url, headers, timeout, retries, retry_sleep):
+    for attempt in range(1, retries + 1):
+        logging.info("HTTP request attempt %d/%d | URL: %s", attempt, retries, url)
         try:
-            response = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
+            response = requests.get(url, headers=headers, timeout=timeout)
             response.raise_for_status()
+            logging.info(
+                "HTTP request succeeded | Status: %d | URL: %s", response.status_code, url
+            )
             return response.text
         except Exception as e:
-            last_exception = e
-            logging.warning("Retry %d/%d | %s | %s", attempt, RETRIES, url, e)
-            sleep(RETRY_SLEEP)
-    raise last_exception
+            logging.warning(
+                "HTTP request failed | Attempt %d | URL: %s | Error: %s",
+                attempt, url, e
+            )
+            if attempt < retries:
+                logging.info("Sleeping %ds before retry | URL: %s", retry_sleep, url)
+                sleep(retry_sleep)
+            else:
+                logging.error("All retries exhausted | URL: %s", url)
+                raise
 
 
-def extract_article(html):
+def extract_article_text(html):
     doc = Document(html)
     content_html = doc.summary(html_partial=True)
     soup = BeautifulSoup(content_html, "lxml")
@@ -64,38 +72,83 @@ def extract_article(html):
     for tag in soup(["script", "style", "noscript"]):
         tag.decompose()
 
-    lines = [line.strip() for line in soup.get_text("\n").splitlines() if line.strip()]
-    return "\n".join(lines)
+    text = soup.get_text(" ")
+    return " ".join(text.split())
 
 
-def file_id(i):
-    return f"{START_LINE + i:06d}"
+def save_html(html, directory, article_id):
+    path = os.path.join(directory, f"{article_id}.html")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(html)
+    logging.info("HTML saved | ID: %s | Path: %s", article_id, path)
 
 
-for i, url in enumerate(tqdm(urls, desc="Processing articles")):
-    idx = file_id(i)
+def save_text(text, directory, article_id):
+    path = os.path.join(directory, f"{article_id}.txt")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+    logging.info("Article text saved | ID: %s | Characters: %d", article_id, len(text))
 
-    try:
-        html = fetch_html(url)
 
-        with open(os.path.join(HTML_DIR, f"{idx}.html"), "w", encoding="utf-8") as f:
-            f.write(html)
+def process_single_url(url, article_id, headers, args):
+    logging.info("Processing started | ID: %s | URL: %s", article_id, url)
 
-        article = extract_article(html)
+    html = fetch_html(url, headers, args.timeout, args.retries, args.retry_sleep)
 
-        with open(os.path.join(TEXT_DIR, f"{idx}.txt"), "w", encoding="utf-8") as f:
-            f.write(article)
+    save_html(html, args.html_dir, article_id)
 
-        logging.info("OK | %s | %s", idx, url)
-        sleep(SLEEP_BETWEEN_REQUESTS)
+    article_text = extract_article_text(html)
 
-    except Exception as e:
-        logging.error("FAILED | %s | %s | %s", idx, url, e)
+    save_text(article_text, args.text_dir, article_id)
 
-end_time = datetime.now()
-duration = end_time - start_time
+    logging.info("Processing completed | ID: %s | URL: %s", article_id, url)
 
-logging.info("Block end | duration %s", duration)
-logging.info("=" * 60)
 
-print("Done. See scraping.log for details.")
+def run_scraping_session(args):
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; AcademicResearchBot/1.0)"}
+
+    os.makedirs(args.html_dir, exist_ok=True)
+    os.makedirs(args.text_dir, exist_ok=True)
+
+    urls = load_urls(args.urls, args.start, args.end)
+
+    logging.info(
+        "Scraping session started | URLs: %s | Range: %d–%d | Count: %d",
+        args.urls, args.start, args.end, len(urls)
+    )
+    logging.info(
+        "Configuration | sleep=%ds | retries=%d | retry_sleep=%ds | timeout=%ds",
+        args.sleep, args.retries, args.retry_sleep, args.timeout
+    )
+
+    start_time = datetime.now()
+
+    for i, url in enumerate(tqdm(urls, desc="Scraping articles")):
+        article_id = f"{args.start + i:06d}"
+
+        try:
+            process_single_url(url, article_id, headers, args)
+            sleep(args.sleep)
+        except Exception as e:
+            logging.error(
+                "Processing failed | ID: %s | URL: %s | Error: %s",
+                article_id, url, e
+            )
+
+    duration = datetime.now() - start_time
+    logging.info("Scraping session finished | Duration: %s", duration)
+
+
+def main():
+    args = parse_args()
+    setup_logging(args.log)
+
+    logging.info("=" * 80)
+    run_scraping_session(args)
+    logging.info("=" * 80)
+
+    print("Done. See log for full details.")
+
+
+if __name__ == "__main__":
+    main()

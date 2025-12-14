@@ -1,0 +1,9 @@
+2025-12-14 00:30:57 | INFO | ================================================================================
+2025-12-14 00:30:57 | INFO | Scraping session started | URLs: urls.txt | Range: 0–5000 | Count: 5000
+2025-12-14 00:30:57 | INFO | Configuration | sleep=1s | retries=3 | retry_sleep=5s | timeout=15s
+2025-12-14 00:30:57 | INFO | Processing started | ID: 000000 | URL: https://elpais.com/cultura/2014/12/29/actualidad/1419870979_851774.html
+2025-12-14 00:30:57 | INFO | HTTP request attempt 1/3 | URL: https://elpais.com/cultura/2014/12/29/actualidad/1419870979_851774.html
+2025-12-14 00:30:57 | INFO | HTTP request succeeded | Status: 200 | URL: https://elpais.com/cultura/2014/12/29/actualidad/1419870979_851774.html
+2025-12-14 00:30:57 | INFO | HTML saved | ID: 000000 | Path: news_data/htmls\000000.html
+2025-12-14 00:30:57 | INFO | Article text saved | ID: 000000 | Characters: 3354
+2025-12-14 00:30:57 | INFO | Processing completed | ID: 000000 | URL: https://elpais.com/cultura/2014/12/29/actualidad/1419870979_851774.html

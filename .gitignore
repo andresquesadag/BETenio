@@ -218,3 +218,6 @@ src/news_scraper/scrapers/
 TrainingSrc/analysis_outputs/
 TrainingSrc/stylometry_outputs/
 *.csv
+
+# generated files
+src/article_gens/output/

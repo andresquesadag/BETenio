@@ -240,7 +240,7 @@ if __name__ == "__main__":
     test_path = folderPath + "/test_dataset.csv"
     output_path = folderPath + "/BETenio"
 
-    os.makedirs("analysis_outputs", exist_ok=True)  # ←←← NEW
+    os.makedirs("analysis_outputs", exist_ok=True)
 
     do_training = input(
         "\nDo you want to train the model or use an existing one? (0 = train, 1 = existing): "

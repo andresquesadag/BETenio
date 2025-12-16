@@ -1,11 +1,52 @@
 # V2.0 | 2025-12
-
 import requests
 import os
 import re
 import time
 import pandas as pd
 from typing import Optional
+
+"""
+LM STUDIO CONFIGURATION (AUTHORSHIP MODE – IA AS AUTHOR)
+
+Purpose:
+- Generate AI-authored news articles using human-written articles as a source of information.
+- The AI acts as the author, not as an editor or paraphraser.
+- Configuration balances authorial freedom, factual fidelity, and runtime (< ~2 minutes per article).
+
+Model / Context settings:
+- Context length: 4096 tokens
+- GPU offload: 45 / 48 layers
+- CPU thread pool size: 6
+- Evaluation batch size: 512
+- RoPE frequency base/scale: Auto
+- KV cache offloaded to GPU: ON
+- Keep model in memory: ON
+- Memory mapping (mmap): ON
+- Flash Attention: OFF (stability over experimental speedups)
+- K/V cache quantization: Experimental (enabled)
+
+Inference / Sampling settings:
+- Temperature: 0.4
+- Top-K sampling: 50
+- Top-P sampling: 0.95
+- Repeat penalty: OFF
+- Min-P sampling: OFF
+- Limit response length: OFF (handled implicitly by prompt + runtime constraints)
+
+Rationale:
+- Temperature 0.4 provides sufficient editorial freedom for the AI to act as an author
+  while avoiding uncontrolled hallucinations.
+- Top-K 50 and Top-P 0.95 prevent generation stalls and ensure timely completion.
+- Repeat penalty disabled to allow natural repetition of names, entities, and figures
+  common in factual news reporting.
+- No explicit stylistic constraints (e.g., punctuation rules) to preserve natural
+  authorial signals for authorship attribution experiments.
+
+Status:
+- Configuration validated empirically for quality, factual fidelity, and runtime.
+- Parameters frozen for large-scale dataset generation.
+"""
 
 
 class LMStudioClient:
@@ -45,24 +86,22 @@ class LMStudioClient:
     ) -> Optional[str]:
 
         prompt = f"""
-You are a professional journalist from Spain.
-The user provides a text written in Spanish by a human. The text is a news article describing a real event and contains factual information.
-Your task is to rewrite the article into a clear, well-structured news article written in your own words.
+You are a journalist from Spain.
+The user provides a Spanish news article written by a human, which may include image captions or descriptive lines. Use the text only as a source of information.
+Write your own news article about the same event.
 Rules:
-- The article must be written in Spanish.
-- Preserve all factual information exactly.
-- Do NOT add new facts, interpretations, or context.
-- Improve clarity, structure, and narrative flow.
-- Maintain a neutral and objective journalistic tone.
-- Do NOT remove or omit any factual detail, even if it seems redundant or editorial.
-- If the original text contains image captions, parenthetical notes, or reported quotations, they must be preserved or faithfully paraphrased.
-- Do NOT include a headline.
-- The rewritten article must be written as continuous prose in a single line.
-- Do NOT use line breaks, paragraphs, lists, or bullet points.
-- The length of the rewritten article should be approximately similar to the original.
-- Do NOT mention that the text has been rewritten or generated.
-Output only the rewritten article text.
-Original text:
+1. Write in Spanish.
+2. Preserve all factual information (events, dates, numbers, names).
+3. Do NOT add new facts or speculation.
+4. You may reorder, regroup, and rephrase information freely.
+5. If the source text contains image captions or descriptive elements, incorporate their information naturally into your article.
+6. Maintain a neutral, professional journalistic tone.
+7. Do NOT include a headline.
+8. Write continuous prose in a single line.
+9. The article should be similar in length to the original.
+10. Output only the article text.
+
+Source text:
 {article_text}
 """
 
@@ -90,8 +129,6 @@ Original text:
         except Exception as e:
             print(f"Generation error: {e}")
             return None
-
-
 
 
 def main():

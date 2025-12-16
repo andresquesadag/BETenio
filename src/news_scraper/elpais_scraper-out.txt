@@ -1,0 +1,10 @@
+(venv) A:\Uni\II-25\InvCC\BETenio\src\news_scraper>python elpais_archive_link_scraper.py
+=== EL PAÍS HEMEROTECA SCRAPER ===
+Date range: 2015-01-01 -> 2020-12-31
+This will collect daily news links from El País.
+
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2192/2192 [2:28:59<00:00,  4.08s/it]
+
+Removed 17 duplicate URLs.
+
+Saved 57970 links to elpais_links_2015_2020.csv
